@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* all */
+
+.body {
+    @apply flex flex-col content-center justify-center items-center bg-orange-100;
+}
+
+.admin {
+    @apply flex flex-col bg-orange-100;
+}
+
+
+/* nav barre */
+
+.iconeSettings {
+    @apply mr-4 p-2
+}
+
+/* Login page  */
+
+
+.login_loginpagewindow {
+    @apply bg-white shadow-lg border-2 border-blue-100;
+}
+
+.login_input {
+    @apply border shadow-inner py-2 px-3 w-full text-gray-700;
+}
+
+.login_label {
+    @apply block text-gray-600 mb-2;
+}
+
+.login_btn {
+    @apply bg-blue-500 text-white px-4 py-2 rounded mb-5 hover:bg-blue-500 content-center w-full;
+}
+
+/* Accueil */
+
+.article {
+   @apply bg-gray-100 mb-5 p-4;
+}
+
+.article_titre{
+    @apply text-base text-lg font-bold text-gray-700 no-underline;
+}
+
+article_p{
+    @apply text-sm text-gray-600 mb-4 text-base
+}
+
+/* administration */
+
+.admin_btn {
+    @apply bg-blue-500 text-white px-4 py-2 rounded m-4 hover:bg-blue-300 content-center ;
+}
+
+.admin_post_btn {
+    @apply  bg-blue-500 text-white px-4 py-2 rounded content-center;
+}
+
+.admin_section_a {
+    @apply flex items-center bg-gray-200 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-300
+}
+
+.admin_span {
+    @apply flex items-center justify-center h-6 w-6 rounded-md bg-gray-300 text-gray-600
+}
+
+.admin_ul {
+    @apply flex flex-col py-4 space-y-1
+}
+
+.user {
+    @apply bg-gray-100 border border-gray-200 rounded p-3 mb-4;
+}
+/* chat  */
+
+.chat_body {
+    @apply flex flex-col content-center items-center h-screen justify-center bg-orange-100 ;
+}
+
+
+.hover_user {
+    @apply hover:bg-gray-300;
+}
+
+.chat_button {
+    @apply block w-full py-2 mt-2 text-white bg-blue-500 rounded hover:bg-blue-600;
+}
+
+
+.message {
+    @apply text-right p-2 mb-2  border rounded bg-gray-200;
+}
+
+.date {
+    @apply block mt-1 text-sm text-gray-500
+}
+
