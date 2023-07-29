@@ -113,7 +113,7 @@ if(isset($_POST['firstname']) &&
 
 		# CREATION DU FICHIER USER
 		$contenuFichier = "Utilisateur: $username   Mot de passe temporaire: $password\n";
-		$cheminFichier = "compte.txt";
+		$cheminFichier = "compt.txt";
 		file_put_contents($cheminFichier, $contenuFichier);
 
       	$password = password_hash($password, PASSWORD_DEFAULT);
