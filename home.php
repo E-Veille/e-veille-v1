@@ -70,12 +70,24 @@ if (isset($_SESSION['username'])) {
             <?php
             $role = $_SESSION['role'];
 
+            // Clé d'API
+            $apiKey = "feur"; // Remplacez par votre propre clé d'API
+
             // URL de votre API
             $apiUrl = "https://eligoal.com/e-veille/api/post";
 
+            // Configuration de l'en-tête de la requête
+            $options = [
+                'http' => [
+                    'header' => "X-API-Key: $apiKey\r\n",
+                ],
+            ];
+
+            $context = stream_context_create($options);
+
             try {
-                // Effectuer une requête GET à votre API
-                $apiResponse = file_get_contents($apiUrl);
+                // Effectuer une requête GET à votre API avec l'en-tête de la clé d'API
+                $apiResponse = file_get_contents($apiUrl, false, $context);
 
                 // Vérifier si la réponse est valide
                 if ($apiResponse !== false) {
@@ -104,6 +116,7 @@ if (isset($_SESSION['username'])) {
         </div>
     </div>
 </main>
+
 
 
     </body>
