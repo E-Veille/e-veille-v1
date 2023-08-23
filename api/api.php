@@ -32,6 +32,7 @@ class API
                         } else {
                             $this->getpost($url[1]);
                         }
+                        break;
                     default:
                         throw new Exception("Invalid request, check the URL.");
                 }
