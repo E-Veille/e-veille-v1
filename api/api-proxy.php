@@ -2,7 +2,7 @@
 // api-proxy.php - Fichier PHP pour agir comme un proxy vers l'API externe
 
 // Récupérez la clé d'API depuis une variable d'environnement sécurisée
-$apiKey = getenv('API_KEY');
+$apiKey = 'feur';
 
 // URL de l'API externe
 $apiUrl = "https://eligoal.com/e-veille/api/post";
