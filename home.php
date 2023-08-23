@@ -61,60 +61,50 @@ if (isset($_SESSION['username'])) {
     
     <!-- Contenu principal -->
 
-    <main name="container" class="w-4/5">
+<main name="container" class="w-4/5">
+    <div name="fil d'actualité" class="col-span-2 bg-white shadow-md rounded-lg p-12 mx-auto">
+        <div name="titre">
+            <h2 class="text-lg font-bold mb-4">Fil d'actualité</h2>
+        </div>
+        <div class="overflow-y-auto h-[600px]" name="post-list">
+            <?php
+            $role = $_SESSION['role'];
 
-        <div name="fil d'actualité" class="col-span-2 bg-white shadow-md rounded-lg p-12 mx-auto">
-            <div name="titre">
-                <h2 class="text-lg font-bold mb-4">Fil d'actualité</h2>
-            </div>
-            <div class="overflow-y-auto h-[600px]" name="post-list">
-                <?php
-                $role = $_SESSION['role'];
+            // URL de votre API
+            $apiUrl = "https://eligoal.com/e-veille/api/post";
 
-                // Récupérer le nombre de posts affichés précédemment
-                $postsDisplayed = 0;
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['postsDisplayed'])) {
-                    $postsDisplayed = intval($_POST['postsDisplayed']);
-                }
+            try {
+                // Effectuer une requête GET à votre API
+                $apiResponse = file_get_contents($apiUrl);
 
-                // Requête SQL avec la limitation des posts
-                $query = "SELECT p.*, u.name AS UserName
-                          FROM posts p
-                          LEFT JOIN users u ON p.user_id = u.user_id
-                          ORDER BY p.timestamp DESC";
+                // Vérifier si la réponse est valide
+                if ($apiResponse !== false) {
+                    $apiData = json_decode($apiResponse, true);
 
-                try {
-                    $stmt = $conn->query($query);
-
-                    // Vérification si des publications existent
-                    if ($stmt->rowCount() > 0) {
+                    // Vérifier si des publications existent
+                    if (!empty($apiData)) {
                         // Afficher chaque publication
-                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
+                        foreach ($apiData as $post) {
                             echo "<article class='article'>";
-                            echo "<div class='article_titre' name='title'><a>" . $row["title"] . "</a></div>";
-                            echo "<div class='article_p' name='content'><p>" . substr($row["content"], 0, 1000) . "</p></div>";
-                            echo "<div name='date' class='text-xs'><p>Publié le " . date('d/m/Y H:i', strtotime($row["timestamp"])) . " par " . $row["UserName"] . "</p></div>";
-                            echo "<form method='post'>";
-                            echo "<input type='hidden' name='post_id' value='" . $row["post_id"] . "'>";
-                            echo "</form>";
+                            echo "<div class='article_titre' name='title'><a>" . $post["title"] . "</a></div>";
+                            echo "<div class='article_p' name='content'><p>" . substr($post["content"], 0, 1000) . "</p></div>";
+                            echo "<div name='date' class='text-xs'><p>Publié le " . date('d/m/Y H:i', strtotime($post["timestamp"])) . " par " . $post["UserName"] . "</p></div>";
                             echo "</article>";
                         }
-
-                        $postsDisplayed += 3; // Incrémenter le nombre de posts affichés
                     } else {
                         echo "<p>Aucune publication trouvée.</p>";
                     }
-                } catch (PDOException $e) {
-                    echo 'Erreur lors de l\'exécution de la requête : ' . $e->getMessage();
+                } else {
+                    echo "<p>Erreur lors de la récupération des publications depuis l'API.</p>";
                 }
-
-                // Fermeture de la connexion à la base de données
-                $conn = null;
-                ?>
-            </div>
+            } catch (Exception $e) {
+                echo 'Erreur : ' . $e->getMessage();
+            }
+            ?>
         </div>
-    </main>
+    </div>
+</main>
+
 
     </body>
 
