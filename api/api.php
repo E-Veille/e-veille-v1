@@ -90,6 +90,25 @@ class API
     }
 }
 
+function customErrorHandler($errno, $errstr, $errfile, $errline)
+{
+    // Enregistrez l'erreur dans un fichier journal
+    error_log("Erreur [$errno] : $errstr dans $errfile à la ligne $errline", 3, "error.log");
+
+    // Définissez un message d'erreur générique
+    $error = [
+        "message" => "Une erreur s'est produite. Veuillez réessayer ultérieurement.",
+        "code" => 500 // Code d'erreur interne du serveur
+    ];
+
+    // Renvoyez le message d'erreur sous forme de réponse JSON
+    header("Access-Control-Allow-Origin: *");
+    header("Content-Type: application/json");
+    echo json_encode($error, JSON_UNESCAPED_UNICODE);
+}
+
+
+set_error_handler("customErrorHandler");
 
 $api = new API();
 $api->handleRequest();
