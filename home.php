@@ -59,7 +59,7 @@ if (isset($_SESSION['username'])) {
         </div>
     </nav>
     
-    <!-- Contenu principal -->
+   <!-- Contenu principal -->
 
 <main name="container" class="w-4/5">
     <div name="fil d'actualité" class="col-span-2 bg-white shadow-md rounded-lg p-12 mx-auto">
@@ -70,23 +70,20 @@ if (isset($_SESSION['username'])) {
             <?php
             $role = $_SESSION['role'];
 
-            // Clé d'API
-            $apiKey = "feur"; // Remplacez par votre propre clé d'API
-
-            // URL de votre API
-            $apiUrl = "https://eligoal.com/e-veille/api/post";
+            // URL de votre proxy côté serveur (api-proxy.php)
+            $apiUrl = "api/api-proxy.php"; // Assurez-vous de spécifier le chemin complet vers api-proxy.php
 
             // Configuration de l'en-tête de la requête
             $options = [
                 'http' => [
-                    'header' => "X-API-Key: $apiKey\r\n",
+                    'header' => "Content-type: application/json\r\n",
                 ],
             ];
 
             $context = stream_context_create($options);
 
             try {
-                // Effectuer une requête GET à votre API avec l'en-tête de la clé d'API
+                // Effectuez une requête GET à votre proxy côté serveur (api-proxy.php)
                 $apiResponse = file_get_contents($apiUrl, false, $context);
 
                 // Vérifier si la réponse est valide
@@ -100,8 +97,8 @@ if (isset($_SESSION['username'])) {
                             echo "<article class='article'>";
                             echo "<div class='article_titre' name='title'><a>" . $post["title"] . "</a></div>";
                             echo "<div class='article_p' name='content'><p>" . substr($post["content"], 0, 1000) . "</p></div>";
-                            echo "<div name='date' class='text-xs'><p>Publié le " . date('d/m/Y H:i', strtotime($post["timestamp"])) . " par " . $post["UserName"] . "</p></div>";
-                            echo "</article>";
+                            echo "<div name='date' class='text-xs'><p>Publié le " . date('d/m/Y H:i', strtotime($post["timestamp"])) . " par " . $post["userame"] . "</p></div>";
+                            echo "</article>"; 
                         }
                     } else {
                         echo "<p>Aucune publication trouvée.</p>";
@@ -116,6 +113,7 @@ if (isset($_SESSION['username'])) {
         </div>
     </div>
 </main>
+
 
 
 
