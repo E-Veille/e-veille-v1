@@ -90,6 +90,9 @@ class API
     }
 }
 
+echo "Ceci est une erreur syntaxique"
+
+
 function customErrorHandler($errno, $errstr, $errfile, $errline)
 {
     // Enregistrez l'erreur dans un fichier journal
