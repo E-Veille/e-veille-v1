@@ -37,16 +37,16 @@
 
                     <button type="submit" class="login_btn">Connexion</button>
                     <?php if (isset($_GET['error'])) { ?>
-                    <div class="bg-yellow-200 text-yellow-800 p-3 rounded mb-4">
-                        <?php echo htmlspecialchars($_GET['error']); ?>
-                    </div>
-                <?php } ?>
+                        <div class="bg-yellow-200 text-yellow-800 p-3 rounded mb-4">
+                            <?php echo htmlspecialchars($_GET['error']); ?>
+                        </div>
+                    <?php } ?>
 
-                <?php if (isset($_GET['success'])) { ?>
-                    <div class="bg-green-200 text-green-800 p-3 rounded">
-                        <?php echo htmlspecialchars($_GET['success']); ?>
-                    </div>
-                <?php } ?>
+                    <?php if (isset($_GET['success'])) { ?>
+                        <div class="bg-green-200 text-green-800 p-3 rounded">
+                            <?php echo htmlspecialchars($_GET['success']); ?>
+                        </div>
+                    <?php } ?>
 
                 </div>
             </form>
