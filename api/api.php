@@ -14,15 +14,22 @@ function sendJSON($infos)
 class API
 {
     private $db;
+    private $apiKey; // Ajout de la clé d'API
 
     public function __construct()
     {
         $this->db = getConnexion();
+        
+        // Remplacez 'VOTRE_CLE_API' par votre propre clé d'API
+        $this->apiKey = 'feur';
     }
 
     public function handleRequest()
     {
         try {
+            // Vérification de la clé d'API
+            $this->checkApiKey();
+
             if (!empty($_GET['request'])) {
                 $url = explode("/", filter_var($_GET['request'], FILTER_SANITIZE_URL));
                 switch ($url[0]) {
@@ -45,6 +52,18 @@ class API
                 "code" => $e->getCode()
             ];
             print_r($error);
+        }
+    }
+
+    private function checkApiKey()
+    {
+        // Récupérer la clé d'API de l'en-tête de la demande
+        $clientApiKey = $_SERVER['HTTP_X_API_KEY'];
+
+        // Vérifier la clé d'API
+        if ($clientApiKey !== $this->apiKey) {
+            http_response_code(401); // Code d'erreur non autorisé
+            throw new Exception("Clé d'API non valide.");
         }
     }
 
@@ -88,26 +107,6 @@ class API
         }
     }
 }
-
-function customErrorHandler($errno, $errstr, $errfile, $errline)
-{
-    // Enregistrez l'erreur dans un fichier journal
-    error_log("Erreur [$errno] : $errstr dans $errfile à la ligne $errline", 3, "error.log");
-
-    // Définissez un message d'erreur générique
-    $error = [
-        "message" => "Une erreur s'est produite. Veuillez réessayer ultérieurement.",
-        "code" => 500 // Code d'erreur interne du serveur
-    ];
-
-    // Renvoyez le message d'erreur sous forme de réponse JSON
-    header("Access-Control-Allow-Origin: *");
-    header("Content-Type: application/json");
-    echo json_encode($error, JSON_UNESCAPED_UNICODE);
-}
-
-
-set_error_handler("customErrorHandler");
 
 $api = new API();
 $api->handleRequest();
