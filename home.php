@@ -97,7 +97,7 @@ if (isset($_SESSION['username'])) {
                             echo "<article class='article'>";
                             echo "<div class='article_titre' name='title'><a>" . $post["title"] . "</a></div>";
                             echo "<div class='article_p' name='content'><p>" . substr($post["content"], 0, 1000) . "</p></div>";
-                            echo "<div name='date' class='text-xs'><p>Publié le " . date('d/m/Y H:i', strtotime($post["timestamp"])) . " par " . $post["userame"] . "</p></div>";
+                            echo "<div name='date' class='text-xs'><p>Publié le " . date('d/m/Y H:i', strtotime($post["timestamp"])) . " par " . $post["username"] . "</p></div>";
                             echo "</article>"; 
                         }
                     } else {
