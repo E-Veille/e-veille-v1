@@ -53,7 +53,6 @@ class API
         $query = "SELECT * FROM posts";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
-        echo "Ceci est une erreur syntaxique"
         $posts = array();
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
