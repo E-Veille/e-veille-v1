@@ -71,7 +71,7 @@ if (isset($_SESSION['username'])) {
             $role = $_SESSION['role'];
 
             // URL de votre proxy côté serveur (api-proxy.php)
-            $apiUrl = "https://eligoal.com/e-veille/api/api-proxy.php"; // Assurez-vous de spécifier le chemin complet vers api-proxy.php
+            $apiUrl = "app/http/api-proxy.php"; // Assurez-vous de spécifier le chemin complet vers api-proxy.php
 
             // Configuration de l'en-tête de la requête
             $options = [

@@ -19,8 +19,7 @@ class API
     public function __construct()
     {
         $this->db = getConnexion();
-        
-        // Remplacez 'VOTRE_CLE_API' par votre propre clé d'API
+
         $this->apiKey = 'feur';
     }
 
@@ -40,6 +39,10 @@ class API
                             $this->getpost($url[1]);
                         }
                         break;
+                    case "users":
+                        $this->getAllUsers(); // Appeler la fonction pour récupérer la liste des utilisateurs.
+                        break;
+
                     default:
                         throw new Exception("Invalid request, check the URL.");
                 }
@@ -106,6 +109,40 @@ class API
             throw new Exception("Le message avec l'ID $id n'a pas été trouvé.");
         }
     }
+
+    public function getAllUsers()
+{
+    try {
+        $query = "SELECT * FROM users";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $users = array();
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $user = array(
+                "user_id" => $row['user_id'],
+                "name" => $row['name'],
+                "username" => $row['username'],
+                "p_p" => $row['p_p'],
+                "last_seen" => $row['last_seen'],
+                "role" => $row['role'],
+                "reset" => $row['reset']
+            );
+
+            $users[] = $user;
+        }
+
+        sendJSON($users);
+    } catch (Exception $e) {
+        $error = [
+            "message" => $e->getMessage(),
+            "code" => $e->getCode()
+        ];
+        print_r($error);
+    }
+}
+
+
 }
 
 $api = new API();
