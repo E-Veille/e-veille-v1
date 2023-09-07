@@ -14,7 +14,7 @@
     <script>
         // Fonction pour charger les posts depuis l'API
         function loadPosts() {
-            fetch('proxy.php', {
+            fetch('app/http/proxy.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
