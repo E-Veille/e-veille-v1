@@ -11,7 +11,7 @@ if (isset($_SESSION['username'])) {
     # Obtenir les données de l'utilisateur
     $user = getUser($_SESSION['username'], $conn);
     $adminRole = 'admin';
-    ?>
+?>
 
     <!DOCTYPE html>
     <html lang="en">
@@ -31,88 +31,84 @@ if (isset($_SESSION['username'])) {
     </head>
 
     <body class="body h-screen mt-12">
-    <!-- Barre de navigation -->
+        <!-- Barre de navigation -->
 
-    <nav class="bg-white shadow-lg absolute inset-x-0 top-0 h-16">
-        <div class="flex items-center justify-center m-2">
-            <a href="chat.php?user=intervenant" class="icone mr-4">
-                <span class="material-symbols-outlined">hearing</span>
-            </a>
-            <!-- Icone Home -->
-            <a href="home.php" class="icone mr-4 p-2">
-                <span class="material-symbols-outlined">home</span>
-            </a>
-            <!-- Account icone  -->
-            <a href="profil.php" class="icone mr-4 p-2">
-                <span class="material-symbols-outlined">account_circle</span>
-            </a>
-            <!-- Admin icone -->
-            <?php if ($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'influenceur' || $_SESSION['role'] == 'intervenant'): ?>
-                <a href="./backoffice.php" class="icone mr-4 p-2">
-                    <span class="material-symbols-outlined"> construction</span>
+        <nav class="bg-white shadow-lg absolute inset-x-0 top-0 h-16">
+            <div class="flex items-center justify-center m-2">
+                <a href="chat.php?user=intervenant" class="icone mr-4">
+                    <span class="material-symbols-outlined">hearing</span>
                 </a>
-            <?php endif; ?>
-            <!-- Logout -->
-            <a href="logout.php" class="icone p-2">
-                <span class="material-symbols-outlined">logout</span>
-            </a>
-        </div>
-    </nav>
-    
-   <!-- Contenu principal -->
+                <!-- Icone Home -->
+                <a href="home.php" class="icone mr-4 p-2">
+                    <span class="material-symbols-outlined">home</span>
+                </a>
+                <!-- Account icone  -->
+                <a href="profil.php" class="icone mr-4 p-2">
+                    <span class="material-symbols-outlined">account_circle</span>
+                </a>
+                <!-- Admin icone -->
+                <?php if ($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'influenceur' || $_SESSION['role'] == 'intervenant') : ?>
+                    <a href="./backoffice.php" class="icone mr-4 p-2">
+                        <span class="material-symbols-outlined"> construction</span>
+                    </a>
+                <?php endif; ?>
+                <!-- Logout -->
+                <a href="logout.php" class="icone p-2">
+                    <span class="material-symbols-outlined">logout</span>
+                </a>
+            </div>
+        </nav>
 
-<main name="container" class="w-4/5">
-    <div name="fil d'actualité" class="col-span-2 bg-white shadow-md rounded-lg p-12 mx-auto">
-        <div name="titre">
-            <h2 class="text-lg font-bold mb-4">Fil d'actualité</h2>
-        </div>
-        <div class="overflow-y-auto h-[600px]" name="post-list">
-            <?php
-            $role = $_SESSION['role'];
+        <!-- Contenu principal -->
 
-            // URL de votre proxy côté serveur (api-proxy.php)
-            $apiUrl = "app/http/api-proxy.php"; // Assurez-vous de spécifier le chemin complet vers api-proxy.php
+        <main>
+            <h1>Liste des Articles</h1>
+            <ul id="articleList"></ul>
 
-            // Configuration de l'en-tête de la requête
-            $options = [
-                'http' => [
-                    'header' => "Content-type: application/json\r\n",
-                ],
-            ];
+            <script>
+                // Fonction pour récupérer et afficher la liste des articles
+                function fetchArticles() {
+                    // Créez une demande JSON pour récupérer tous les articles
+                    const requestData = {
+                        endpoint: 'post',
+                        method: 'GET',
+                        data: {}
+                    };
 
-            $context = stream_context_create($options);
+                    fetch('app/http/proxy.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(requestData)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Traitez les données et affichez-les dans la liste
+                            const articleList = document.getElementById('articleList');
+                            articleList.innerHTML = ''; // Effacez le contenu précédent
 
-            try {
-                // Effectuez une requête GET à votre proxy côté serveur (api-proxy.php)
-                $apiResponse = file_get_contents($apiUrl, false, $context);
-
-                // Vérifier si la réponse est valide
-                if ($apiResponse !== false) {
-                    $apiData = json_decode($apiResponse, true);
-
-                    // Vérifier si des publications existent
-                    if (!empty($apiData)) {
-                        // Afficher chaque publication
-                        foreach ($apiData as $post) {
-                            echo "<article class='article'>";
-                            echo "<div class='article_titre' name='title'><a>" . $post["title"] . "</a></div>";
-                            echo "<div class='article_p' name='content'><p>" . substr($post["content"], 0, 1000) . "</p></div>";
-                            echo "<div name='date' class='text-xs'><p>Publié le " . date('d/m/Y H:i', strtotime($post["timestamp"])) . " par " . $post["username"] . "</p></div>";
-                            echo "</article>"; 
-                        }
-                    } else {
-                        echo "<p>Aucune publication trouvée.</p>";
-                    }
-                } else {
-                    echo "<p>Erreur lors de la récupération des publications depuis l'API.</p>";
+                            if (data && data.length > 0) {
+                                data.forEach(article => {
+                                    const listItem = document.createElement('li');
+                                    listItem.textContent = `ID: ${article.id}, Titre: ${article.title}, Contenu: ${article.content}`;
+                                    articleList.appendChild(listItem);
+                                });
+                            } else {
+                                const listItem = document.createElement('li');
+                                listItem.textContent = 'Aucun article trouvé.';
+                                articleList.appendChild(listItem);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur lors de la récupération des articles:', error);
+                        });
                 }
-            } catch (Exception $e) {
-                echo 'Erreur : ' . $e->getMessage();
-            }
-            ?>
-        </div>
-    </div>
-</main>
+
+                // Appelez la fonction pour afficher la liste des articles lors du chargement de la page
+                fetchArticles();
+            </script>
+        </main>
 
 
 
@@ -121,7 +117,7 @@ if (isset($_SESSION['username'])) {
 
 
     </html>
-    <?php
+<?php
 } else {
     header("Location: index.php");
     exit;
