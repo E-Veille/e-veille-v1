@@ -75,7 +75,7 @@ if (isset($_SESSION['username'])) {
                         data: {}
                     };
 
-                    fetch('votre_script_php.php', {
+                    fetch('app/http/proxy.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -103,11 +103,12 @@ if (isset($_SESSION['username'])) {
                         .catch(error => {
                             console.error('Erreur lors de la récupération des articles:', error);
                         });
+                        
                 }
 
                 // Appelez la fonction pour afficher la liste des articles lors du chargement de la page
                 fetchArticles();
-                console.log(postsList);
+                
             </script>
         </main>
 
