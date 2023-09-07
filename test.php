@@ -1,55 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Liste des Articles</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts de Réseau Social</title>
 </head>
 <body>
-    <h1>Liste des Articles</h1>
-    <ul id="articleList"></ul>
+    <h1>Posts de Réseau Social</h1>
+    <div id="post-container"></div>
 
     <script>
-        // Fonction pour récupérer et afficher la liste des articles
-        function fetchArticles() {
-            // Créez une demande JSON pour récupérer tous les articles
-            const requestData = {
-                endpoint: 'post',
-                method: 'GET',
-                data: {}
-            };
-
-            fetch('app/http/proxy.php', {
+        // Fonction pour charger les posts depuis l'API
+        function loadPosts() {
+            fetch('proxy.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(requestData)
+                body: JSON.stringify({
+                    endpoint: 'post',
+                    method: 'GET',
+                    data: {}
+                })
             })
             .then(response => response.json())
-            .then(data => {
-                // Traitez les données et affichez-les dans la liste
-                const articleList = document.getElementById('articleList');
-                articleList.innerHTML = ''; // Effacez le contenu précédent
+            .then(posts => {
+                // Afficher les posts dans la page
+                const postContainer = document.getElementById('post-container');
+                postContainer.innerHTML = '';
 
-                if (data && data.length > 0) {
-                    data.forEach(article => {
-                        const listItem = document.createElement('li');
-                        listItem.textContent = `ID: ${article.id}, Titre: ${article.title}, Contenu: ${article.content}`;
-                        articleList.appendChild(listItem);
-                    });
-                } else {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = 'Aucun article trouvé.';
-                    articleList.appendChild(listItem);
-                }
+                posts.forEach(post => {
+                    const postElement = document.createElement('div');
+                    postElement.innerHTML = `
+                        <h2>${post.title}</h2>
+                        <p>${post.content}</p>
+                        <p>Auteur: ${post.user_id}</p>
+                        <p>Date: ${post.timestamp}</p>
+                        <hr>
+                    `;
+                    postContainer.appendChild(postElement);
+                });
             })
             .catch(error => {
-                console.error('Erreur lors de la récupération des articles:', error);
+                console.error('Erreur lors du chargement des posts:', error);
             });
         }
 
-        // Appelez la fonction pour afficher la liste des articles lors du chargement de la page
-        fetchArticles();
+        // Appeler la fonction pour charger les posts au chargement de la page
+        window.onload = loadPosts;
     </script>
 </body>
 </html>
