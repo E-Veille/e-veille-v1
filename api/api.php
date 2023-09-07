@@ -34,20 +34,22 @@ class API
                 switch ($url[0]) {
                     case "post":
                         if (empty($url[1])) {
-                            $this->getAllpost();
+                            $this->getAllPosts();
+                        } else if ($url[1] === "delete" && !empty($url[2])) {
+                            $this->deletePost($url[2]);
                         } else {
-                            $this->getpost($url[1]);
+                            $this->getPost($url[1]);
                         }
                         break;
                     case "users":
-                        $this->getAllUsers(); // Appeler la fonction pour récupérer la liste des utilisateurs.
+                        $this->getAllUsers();
                         break;
 
                     default:
-                        throw new Exception("Invalid request, check the URL.");
+                        throw new Exception("Requête invalide");
                 }
             } else {
-                throw new Exception("Data retrieval problem.");
+                throw new Exception("Problème de réception de donnée.");
             }
         } catch (Exception $e) {
             $error = [
@@ -70,7 +72,7 @@ class API
         }
     }
 
-    public function getAllpost()
+    public function getAllPosts()
     {
         $query = "SELECT * FROM posts";
         $stmt = $this->db->prepare($query);
@@ -110,39 +112,69 @@ class API
         }
     }
 
-    public function getAllUsers()
-{
-    try {
-        $query = "SELECT * FROM users";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        $users = array();
+    public function deletePost($id)
+    {
+        try {
+            // Vérifiez d'abord si le post existe
+            $query = "SELECT * FROM posts WHERE post_id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
 
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user = array(
-                "user_id" => $row['user_id'],
-                "name" => $row['name'],
-                "username" => $row['username'],
-                "p_p" => $row['p_p'],
-                "last_seen" => $row['last_seen'],
-                "role" => $row['role'],
-                "reset" => $row['reset']
-            );
+            $post = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $users[] = $user;
+            if (!$post) {
+                throw new Exception("Le post avec l'ID $id n'a pas été trouvé.");
+            }
+
+            // Si le post existe, supprimez-le de la base de données
+            $query = "DELETE FROM posts WHERE post_id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            sendJSON(["message" => "Le post avec l'ID $id a été supprimé avec succès."]);
+        } catch (Exception $e) {
+            $error = [
+                "message" => $e->getMessage(),
+                "code" => $e->getCode()
+            ];
+            print_r($error);
         }
-
-        sendJSON($users);
-    } catch (Exception $e) {
-        $error = [
-            "message" => $e->getMessage(),
-            "code" => $e->getCode()
-        ];
-        print_r($error);
     }
-}
 
 
+    public function getAllUsers()
+    {
+        try {
+            $query = "SELECT * FROM users";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            $users = array();
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $user = array(
+                    "user_id" => $row['user_id'],
+                    "name" => $row['name'],
+                    "username" => $row['username'],
+                    "p_p" => $row['p_p'],
+                    "last_seen" => $row['last_seen'],
+                    "role" => $row['role'],
+                    "reset" => $row['reset']
+                );
+
+                $users[] = $user;
+            }
+
+            sendJSON($users);
+        } catch (Exception $e) {
+            $error = [
+                "message" => $e->getMessage(),
+                "code" => $e->getCode()
+            ];
+            print_r($error);
+        }
+    }
 }
 
 $api = new API();
