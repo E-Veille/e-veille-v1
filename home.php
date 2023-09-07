@@ -106,7 +106,9 @@ if (isset($_SESSION['username'])) {
                 }
 
                 // Appelez la fonction pour afficher la liste des articles lors du chargement de la page
+
                 fetchArticles();
+                console.log(articleList);
             </script>
         </main>
 
