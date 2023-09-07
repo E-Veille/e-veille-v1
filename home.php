@@ -61,57 +61,54 @@ if (isset($_SESSION['username'])) {
 
         <!-- Contenu principal -->
 
-        <main name="container" class="w-4/5">
-            <div name="fil d'actualité" class="col-span-2 bg-white shadow-md rounded-lg p-12 mx-auto">
-                <div name="titre">
-                    <h2 class="text-lg font-bold mb-4">Fil d'actualité</h2>
-                </div>
-                <div class="overflow-y-auto h-[600px]" name="post-list">
-                    <?php
-                    $role = $_SESSION['role'];
+        <main>
+            <h1>Liste des Articles</h1>
+            <ul id="articleList"></ul>
 
-                    // URL de votre script PHP qui communique avec l'API
-                    $apiUrl = "app/http/proxy.php"; // Assurez-vous de spécifier le chemin complet vers votre fichier PHP
+            <script>
+                // Fonction pour récupérer et afficher la liste des articles
+                function fetchArticles() {
+                    // Créez une demande JSON pour récupérer tous les articles
+                    const requestData = {
+                        endpoint: 'post',
+                        method: 'GET',
+                        data: {}
+                    };
 
-                    // Configuration de l'en-tête de la requête
-                    $options = [
-                        'http' => [
-                            'header' => "Content-type: application/json\r\n",
-                        ],
-                    ];
+                    fetch('votre_script_php.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(requestData)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Traitez les données et affichez-les dans la liste
+                            const postsList = document.getElementById('postList');
+                            //postsList.innerHTML = ''; // Effacez le contenu précédent
 
-                    $context = stream_context_create($options);
-
-                    try {
-                        // Effectuez une requête POST à votre script PHP
-                        $apiResponse = file_get_contents($apiUrl, false, $context);
-
-                        // Vérifiez si la réponse est valide
-                        if ($apiResponse !== false) {
-                            $apiData = json_decode($apiResponse, true);
-
-                            // Vérifiez si des publications existent
-                            if (!empty($apiData)) {
-                                // Affichez chaque publication
-                                foreach ($apiData as $post) {
-                                    echo "<article class='article'>";
-                                    echo "<div class='article_titre' name='title'><a>" . $post["title"] . "</a></div>";
-                                    echo "<div class='article_p' name='content'><p>" . substr($post["content"], 0, 1000) . "</p></div>";
-                                    echo "<div name='date' class='text-xs'><p>Publié le " . date('d/m/Y H:i', strtotime($post["timestamp"])) . " par " . $post["username"] . "</p></div>";
-                                    echo "</article>";
-                                }
+                            if (data && data.length > 0) {
+                                data.forEach(posts => {
+                                    const listItem = document.createElement('li');
+                                    listItem.textContent = `ID: ${posts.id}, Titre: ${posts.title}, Contenu: ${posts.content}`;
+                                    articleList.appendChild(listItem);
+                                });
                             } else {
-                                echo "<p>Aucune publication trouvée.</p>";
+                                const listItem = document.createElement('li');
+                                listItem.textContent = 'Aucun article trouvé.';
+                                articleList.appendChild(listItem);
                             }
-                        } else {
-                            echo "<p>Erreur lors de la récupération des publications depuis l'API.</p>";
-                        }
-                    } catch (Exception $e) {
-                        echo 'Erreur : ' . $e->getMessage();
-                    }
-                    ?>
-                </div>
-            </div>
+                        })
+                        .catch(error => {
+                            console.error('Erreur lors de la récupération des articles:', error);
+                        });
+                }
+
+                // Appelez la fonction pour afficher la liste des articles lors du chargement de la page
+                fetchArticles();
+                console.log(postsList);
+            </script>
         </main>
 
 
