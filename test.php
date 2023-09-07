@@ -29,7 +29,7 @@
                     if (!response.ok) {
                         throw new Error('Erreur de réponse du serveur');
                     }
-                    return response.json();
+                    return response;
                 })
                 .then(posts => {
                     // Afficher la réponse dans la console
